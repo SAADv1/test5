@@ -11,7 +11,6 @@ import { buildEnvironment } from './environments.js';
 import { Orbits, Satellite, Disk, Torque, Seesaw, Impulse, Collision, Work, Lever, Forms, Ramp, Thermal, Phase } from './sims_more.js';
 import { solve, texMap, fill, rich, tex, evalExpr, paramPlain, plainNum } from '../fmt.js';
 import { TEACHER } from '../config.js';
-import { arabicEq, buildDict } from '../arabic.js';
 import { quizHTML, wireQuiz, ideasHTML, mythsHTML, labHTML } from '../teach.js';
 
 const SIMS = { orbits: Orbits, satellite: Satellite, disk: Disk, torque: Torque, seesaw: Seesaw, impulse: Impulse, collision: Collision, work: Work, lever: Lever, forms: Forms, ramp: Ramp, thermal: Thermal, phase: Phase };
@@ -497,13 +496,12 @@ export class Room {
       this.wirePanel(); return;
     }
     const raw = Object.fromEntries(ex.params.map((p) => [p.key, p.value]));
-    const arDict = buildDict(ex, this.L);
     this.panel.innerHTML = `<div class="ip-grip" aria-hidden="true"></div>${this.panelHead(ex.tag, ex.title, KIND[ex.kind])}
       <p class="ip-statement" data-stmt></p>
       <section class="ip-sec"><h3>غيّر المتغيرات <button class="reset" data-rand title="تمرين جديد للطلاب بالقانون نفسه">🎲 أرقام جديدة</button><button class="reset" data-reset>إعادة الضبط</button></h3>
         <div class="sliders">${ex.params.map((p) => `<label class="sl"><span class="sl-top"><span>${p.label} <span class="m">${tex(p.sym)}</span></span><output data-o="${p.key}"></output></span>
           <input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.value}" data-k="${p.key}" aria-label="${p.label}"></label>`).join('')}</div></section>
-      <div class="answer"><span>الناتج</span><div><div class="ans-val" data-ans dir="ltr"></div><p class="ans-ar" data-ans-ar></p></div></div>
+      <div class="answer"><span>الناتج</span><div class="ans-val" data-ans dir="ltr"></div></div>
       <section class="ip-sec"><h3>الحل خطوة بخطوة</h3><ol class="steps" data-steps></ol><button class="reveal-next" data-reveal-next hidden></button></section>
       <p class="insight">💡 ${ex.insight || ''}</p>
       <p class="live-note"><i class="live"></i> المحاكاة في المنتصف تتغير لحظياً مع كل تحريك</p>`;
@@ -514,8 +512,7 @@ export class Room {
       ex.params.forEach((p) => (this.panel.querySelector(`[data-o="${p.key}"]`).textContent = `${paramPlain(p, raw[p.key])} ${p.unit}`));
       const a = ex.answer; const ar = /[\u0600-\u06FF]/.test(a.unit || '');
       this.panel.querySelector('[data-ans]').innerHTML = tex(`${a.sym} = ${map[a.key]}${a.unit && !ar ? `\\;\\text{${a.unit.replace('%', '\\%')}}` : ''}`, true) + (ar ? `<span class="ans-unit">${a.unit}</span>` : '');
-      this.panel.querySelector('[data-ans-ar]').innerHTML = arabicEq(`${a.sym} = ${map[a.key]}${a.unit && !ar ? `\\,\\text{${a.unit}}` : ''}`, arDict) + (ar ? ` ${a.unit}` : '');
-      this.panel.querySelector('[data-steps]').innerHTML = ex.steps.map((s, i) => `<li style="--i:${i}"><span class="st-n">${i + 1}</span><div><p>${s.t}</p><div class="st-eq" dir="ltr">${tex(fill(s.l, map), true)}</div>${(() => { const ar = arabicEq(fill(s.l, map), arDict); return ar ? `<p class="st-ar">${ar}</p>` : ''; })()}</div></li>`).join('');
+      this.panel.querySelector('[data-steps]').innerHTML = ex.steps.map((s, i) => `<li style="--i:${i}"><span class="st-n">${i + 1}</span><div><p>${s.t}</p><div class="st-eq" dir="ltr">${tex(fill(s.l, map), true)}</div></div></li>`).join('');
       const bind = {}; for (const [k, expr] of Object.entries(ex.bind || {})) { try { bind[k] = evalExpr(expr, vals); } catch {} }
       this.sim.set(bind);
       this.applyReveal();

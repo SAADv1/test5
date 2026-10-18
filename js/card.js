@@ -1,7 +1,6 @@
 // بطاقة الدرس: لوحة فيزياء بيضاء أنيقة
 import { tex, sym } from './fmt.js';
 import { TEACHER } from './config.js';
-import { arabicEq, buildDict } from './arabic.js';
 import { formulasHTML, wireFormulas, keyedFormulas, ideasHTML, mythsHTML, quizHTML, wireQuiz, labHTML } from './teach.js';
 
 export function renderCard(layer, L, { onEnter, onClose, onNav, hasPrev, hasNext }) {
@@ -20,7 +19,6 @@ export function renderCard(layer, L, { onEnter, onClose, onNav, hasPrev, hasNext
 
     <div class="eq-stage">
       <div class="eq-main" dir="ltr">${tex(L.main.latex, true)}</div>
-      <p class="eq-ar">${arabicEq(L.main.latex, buildDict({}, L))}</p>
       <span class="eq-label">${L.main.label}</span>
     </div>
 
@@ -47,7 +45,7 @@ export function renderCard(layer, L, { onEnter, onClose, onNav, hasPrev, hasNext
         </section>
         <section class="panel">
           <h3>معادلات مرتبطة من الدرس</h3>
-          <div class="rel">${L.related.map((e) => `<div class="rel-item"><div><span>${e.label}</span><small class="rel-ar">${arabicEq(e.latex, buildDict({}, L))}</small></div><span class="k m">${tex(e.latex)}</span></div>`).join('')}</div>
+          <div class="rel">${L.related.map((e) => `<div class="rel-item"><span>${e.label}</span><span class="k m">${tex(e.latex)}</span></div>`).join('')}</div>
         </section>
       </div>
     </section>

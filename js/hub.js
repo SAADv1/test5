@@ -29,58 +29,64 @@ export function buildHub(el, db, { onCard, onRoom, onSwitch, onFormulas }) {
   el.innerHTML = `
   <div class="hub-scroll">
     <header class="hub-top">
-      <div class="brand"><span class="brand-mark">✦</span><div><h1>متحف فيزياء 2</h1><p>${TEACHER}</p></div></div>
-      <div class="top-actions">
-        <button class="top-link" data-fx>لوحة القوانين</button>
-        <div class="view-switch" role="tablist" aria-label="طريقة العرض">
-          <button role="tab" aria-selected="true" data-ui="hub">القاعات</button>
-          <button role="tab" aria-selected="false" data-ui="timeline">الخط الزمني</button>
-        </div>
+      <div class="brand"><span class="brand-mark">✦</span><div><h1>متحف فيزياء 2</h1><p>نظام المسارات · ${TEACHER}</p></div></div>
+      <div class="view-switch" role="tablist" aria-label="طريقة العرض">
+        <button role="tab" aria-selected="true" data-ui="hub">معرض البيئات</button>
+        <button role="tab" aria-selected="false" data-ui="timeline">الخط الزمني الكوني</button>
       </div>
     </header>
 
     <section class="hub-hero">
       <div class="hero-mosaic" aria-hidden="true">${mosaic}${mosaic}</div>
       <div class="hero-inner">
-        <h2>تجوّل داخل الفيزياء،<br>قاعةً بعد قاعة</h2>
-        <p class="hero-sub">لكل درس قاعة ثلاثية الأبعاد: حرّك المتغيرات وشاهد القوانين تعمل أمامك.</p>
-        <div class="hero-btns"><button class="hero-cta" data-start>ابدأ الجولة <i>←</i></button><button class="hero-cta alt" data-fx>لوحة القوانين</button></div>
-        <p class="hero-line"><span>6 فصول</span><span>${lessons.length} قاعة</span><span>${nEx} معروضاً</span><span>${nFx} قانوناً مبسّطاً</span></p>
+        <p class="hero-teacher"><span>إعداد وتقديم</span><b>${TEACHER}</b></p>
+        <p class="hero-kicker">ثلاث عشرة قاعة · رحلة واحدة</p>
+        <h2>تجوّل داخل الفيزياء، قاعةً بعد قاعة</h2>
+        <p class="hero-sub">لكل درس بيئته الخاصة: مرصد ومحطة فضاء وورشة ونفق تصادم ومختبرات… ادخل، حرّك المتغيرات، وشاهد القوانين تعمل أمامك.</p>
+        <div class="hero-stats">
+          <div><b>6</b><span>فصول</span></div><div><b>${lessons.length}</b><span>قاعة</span></div>
+          <div><b>${total}</b><span>مسألة محلولة</span></div><div><b>${nEx}</b><span>معروضاً</span></div><div><b>${nFx}</b><span>قانوناً مبسّطاً</span></div>
+        </div>
+        <div class="hero-btns"><button class="hero-cta" data-start>ابدأ من القاعة الأولى <i>←</i></button><button class="hero-cta alt" data-fx>لوحة القوانين <i>ƒ</i></button></div>
       </div>
     </section>
 
     <section class="teach-tools" aria-label="أدوات المعلم">
-      <button class="tt" data-fx><i>ƒ</i><div><b>لوحة القوانين</b><span>صياغة مبسّطة وحيل للحفظ</span></div></button>
-      <button class="tt" data-tl><i>✦</i><div><b>جولة تعريفية</b><span>بداية مشوّقة للحصة</span></div></button>
-      <div class="tt"><i>▣</i><div><b>وضع العرض</b><span>زر «عرض» داخل كل قاعة</span></div></div>
-      <div class="tt"><i>?</i><div><b>اختبر فهمك</b><span>${nQ} سؤالاً مع التفسير</span></div></div>
+      <h3>أدوات الشرح داخل الصف</h3>
+      <div class="tt-grid">
+        <button class="tt" data-fx><i>ƒ</i><b>لوحة القوانين</b><span>${nFx} قانوناً بصياغة أسهل، مع حيل الحفظ ومثلث القانون التفاعلي ووضع «اختبر حفظك».</span></button>
+        <button class="tt" data-tl><i>✦</i><b>جولة الخط الزمني</b><span>جولة تلقائية بين الفصول الستة ومحطات تاريخ الفيزياء — بداية مشوّقة للحصة.</span></button>
+        <div class="tt"><i>▣</i><b>وضع العرض في القاعات</b><span>زر «عرض» داخل كل قاعة يكبّر الخط ويكشف خطوات الحل واحدة تلو الأخرى (→ أو مسافة).</span></div>
+        <div class="tt"><i>?</i><b>اختبر فهمك</b><span>${nQ} سؤالاً في بطاقات الدروس وفي كشك خاص داخل كل قاعة، مع تفسير كل إجابة.</span></div>
+      </div>
     </section>
 
     <nav class="hub-tabs" aria-label="الفصول">
-      <button class="htab" data-ch="all" aria-pressed="true">الكل</button>
-      ${db.chapters.map((c) => `<button class="htab" data-ch="${c.id}" aria-pressed="false" style="--c:${c.color}"><i></i>${esc(c.title)}</button>`).join('')}
+      <button class="htab" data-ch="all" aria-pressed="true">كل القاعات</button>
+      ${db.chapters.map((c) => `<button class="htab" data-ch="${c.id}" aria-pressed="false" style="--c:${c.color}"><i></i><b>${c.id}</b>${esc(c.title)}</button>`).join('')}
     </nav>
 
     <main class="hub-grid">
       ${db.chapters.map((c) => `
       <section class="hub-ch" data-ch="${c.id}" style="--c:${c.color}">
-        <header class="ch-head"><span class="ch-num">${c.id}</span><h3>${esc(c.title)}</h3><span class="ch-count">${c.lessons.length} قاعات</span></header>
+        <header class="ch-head"><span class="ch-num">${c.id}</span><div><small>الفصل ${c.id}</small><h3>${esc(c.title)}</h3></div><span class="ch-count">${c.lessons.length} قاعات</span></header>
         <div class="ch-cards">
           ${c.lessons.map((l) => { const L = lessons.find((x) => x.code === l.code); const [env, blurb] = ENVS[l.code] || ['', ''];
             return `
           <article class="env-card" data-code="${l.code}" tabindex="0" aria-label="${esc(env)} — ${esc(L.title)}">
-            <div class="env-img" style="background-image:url(img/rooms/${l.code}.jpg)"><span class="env-code">${l.code}</span></div>
+            <div class="env-img" style="background-image:url(img/rooms/${l.code}.jpg)"><span class="env-code">${l.code}</span><span class="env-badge">${L.exhibits.length} معروضات</span></div>
             <div class="env-body">
-              <p class="env-name">${esc(env)}</p>
+              <p class="env-name">${esc(env)}<span class="env-teacher">${TEACHER}</span></p>
               <h4>${esc(L.title)}</h4>
               <p class="env-blurb">${esc(blurb)}</p>
-              <div class="env-actions"><button class="ghost" data-act="card">بطاقة الدرس</button><button class="solid" data-act="room">ادخل القاعة <i>←</i></button></div>
+              <div class="env-eq" dir="ltr">${tex(L.main.latex)}</div>
+              <div class="env-actions"><button class="ghost" data-act="card">بطاقة الدرس</button><button class="ghost" data-act="fx">القوانين</button><button class="solid" data-act="room">ادخل القاعة <i>←</i></button></div>
             </div>
           </article>`; }).join('')}
         </div>
       </section>`).join('')}
     </main>
-    <footer class="hub-foot"><b>متحف فيزياء 2</b><span>${TEACHER}</span><span>المحتوى مطابق لمنهج نظام المسارات</span></footer>
+    <footer class="hub-foot">متحف فيزياء 2 · ${TEACHER} · المحتوى مطابق لمنهج نظام المسارات · السياق التاريخي من ويكيبيديا</footer>
   </div>`;
 
   // ارتفاع الترويسة الفعلي يحدد موضع شريط الفصول الثابت (يتكيف مع كل الشاشات)
